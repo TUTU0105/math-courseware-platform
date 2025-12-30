@@ -48,8 +48,8 @@ export default function UsersPage() {
           province: '上海市',
           city: '市辖区',
           freeDays: 5,
-          vipType: null,
-          vipExpireTime: null,
+          vipType: undefined,
+          vipExpireTime: undefined,
           createTime: '2024-12-25'
         }
       ]
