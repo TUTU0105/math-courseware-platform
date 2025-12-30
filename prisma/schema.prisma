@@ -1,0 +1,133 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id             String    @id @default(uuid())
+  username       String    @unique
+  password       String
+  role           String    // super, content, data
+  phone          String?
+  createTime     DateTime  @default(now()) @map("create_time")
+  lastLoginTime  DateTime? @map("last_login_time")
+  
+  navigationUpdates Navigation[]
+
+  @@map("admin")
+}
+
+model User {
+  id             String    @id @default(uuid())
+  wxOpenId       String?   @unique @map("wx_openid")
+  phone          String?
+  username       String?   @unique
+  password       String?
+  province       String?
+  city           String?
+  freeDays       Int       @default(0) @map("free_days")
+  vipType        String?   @map("vip_type") // monthly, quarterly, yearly
+  vipExpireTime  DateTime? @map("vip_expire_time")
+  createTime     DateTime  @default(now()) @map("create_time")
+  
+  payments      Payment[]
+  operationLogs OperationLog[]
+  annotations   Annotation[]
+
+  @@map("user")
+}
+
+model Courseware {
+  id          String    @id @default(uuid())
+  press       String    // 出版社
+  grade       String    // 学年段
+  chapter     String    // 章
+  menu1       String    // 一级菜单
+  menu2       String    // 二级菜单
+  name        String    // 课件名称
+  content     String    @db.Text
+  createTime  DateTime  @default(now()) @map("create_time")
+  updateTime  DateTime  @updatedAt @map("update_time")
+  
+  navigation  Navigation[]
+  annotations Annotation[]
+
+  @@map("courseware")
+}
+
+model Navigation {
+  id           String   @id @default(uuid())
+  menu1Name    String   @map("menu1_name")
+  menu2Name    String?  @map("menu2_name")
+  coursewareId String?  @map("courseware_id")
+  sort         Int
+  status       String   // draft, active
+  updateAdminId String? @map("update_admin")
+  updateTime   DateTime @updatedAt @map("update_time")
+  
+  courseware   Courseware? @relation(fields: [coursewareId], references: [id])
+  updateAdmin  Admin?     @relation(fields: [updateAdminId], references: [id])
+
+  @@map("navigation")
+}
+
+model Payment {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  amount     Decimal   @db.Decimal(10, 2)
+  payType    String    @map("pay_type") // monthly, quarterly, yearly
+  payTime    DateTime? @map("pay_time")
+  wxTradeNo  String?   @unique @map("wx_trade_no")
+  status     String    // success, failed, pending
+  
+  user       User      @relation(fields: [userId], references: [id])
+
+  @@map("payment")
+}
+
+model OperationLog {
+  id            String    @id @default(uuid())
+  operatorType  String    @map("operator_type") // admin, user
+  operatorId    String    @map("operator_id")
+  operation     String    @db.Text
+  operationTime DateTime  @default(now()) @map("operation_time")
+  ip            String?
+  device        String?   @db.Text
+
+  user          User?     @relation(fields: [operatorId], references: [id])
+
+  @@map("operation_log")
+}
+
+model Annotation {
+  id           String    @id @default(uuid())
+  userId       String    @map("user_id")
+  coursewareId String    @map("courseware_id")
+  content      String    @db.Text // JSON格式
+  createTime   DateTime  @default(now()) @map("create_time")
+
+  user         User      @relation(fields: [userId], references: [id])
+  courseware   Courseware @relation(fields: [coursewareId], references: [id])
+
+  @@map("annotation")
+}
+
+model SystemConfig {
+  id               String    @id @default(uuid())
+  phoneVerify      Boolean   @default(false) @map("phone_verify")
+  defaultFreeDays  Int       @default(7) @map("default_free_days")
+  monthlyPrice     Decimal   @map("monthly_price") @db.Decimal(10, 2)
+  quarterlyPrice   Decimal   @map("quarterly_price") @db.Decimal(10, 2)
+  yearlyPrice      Decimal   @map("yearly_price") @db.Decimal(10, 2)
+  qrCodeUrl        String?   @map("qr_code_url")
+  footerInfo       String?   @map("footer_info") @db.Text
+  updateTime       DateTime  @updatedAt @map("update_time")
+
+  @@map("system_config")
+}

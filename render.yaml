@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: math-courseware-platform
+    env: node
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: DATABASE_URL
+        fromDatabase:
+          name: math-courseware-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://math-courseware-platform.onrender.com
+    plan: free
+
+databases:
+  - name: math-courseware-db
+    databaseName: math_courseware
+    user: math_user
+    plan: free
