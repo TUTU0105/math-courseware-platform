@@ -10,8 +10,8 @@ interface User {
   province: string
   city: string
   freeDays: number
-  vipType: string
-  vipExpireTime: string
+  vipType: string | null
+  vipExpireTime: string | null
   createTime: string
 }
 
@@ -48,8 +48,8 @@ export default function UsersPage() {
           province: '上海市',
           city: '市辖区',
           freeDays: 5,
-          vipType: undefined,
-          vipExpireTime: undefined,
+          vipType: null,
+          vipExpireTime: null,
           createTime: '2024-12-25'
         }
       ]
