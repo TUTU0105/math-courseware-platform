@@ -88,13 +88,18 @@ export default function AuthPage() {
       const data = await res.json()
 
       if (data.success) {
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-        router.push('/')
+        try {
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('user', JSON.stringify(data.user))
+          router.push('/')
+        } catch (storageError) {
+          setError('浏览器不支持本地存储，请更换浏览器')
+        }
       } else {
         setError(data.error || '登录失败')
       }
     } catch (err) {
+      console.error('Login error:', err)
       setError('登录失败，请稍后重试')
     } finally {
       setLoading(false)
