@@ -212,44 +212,6 @@ export default function Navigation({ navigations, filters = { presses: [], grade
             重置
           </button>
         </div>
-          
-          <select
-            value={selectedPress}
-            onChange={(e) => { setSelectedPress(e.target.value); handleFilterChange() }}
-            className="w-full p-2 rounded bg-secondary text-white"
-          >
-            <option value="">选择出版社</option>
-            {filters.presses.map(p => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-          <select
-            value={selectedGrade}
-            onChange={(e) => { setSelectedGrade(e.target.value); handleFilterChange() }}
-            className="w-full p-2 rounded bg-secondary text-white"
-          >
-            <option value="">选择学年段</option>
-            {filters.grades.map(g => (
-              <option key={g} value={g}>{g}</option>
-            ))}
-          </select>
-          <select
-            value={selectedChapter}
-            onChange={(e) => { setSelectedChapter(e.target.value); handleFilterChange() }}
-            className="w-full p-2 rounded bg-secondary text-white"
-          >
-            <option value="">选择章</option>
-            {filters.chapters.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-          <button
-            onClick={handleReset}
-            className="w-full py-2 bg-white/20 text-white rounded hover:bg-white/30"
-          >
-            重置
-          </button>
-        </div>
 
         {/* 菜主体 */}
         <div className="flex-1 bg-secondary overflow-y-auto p-4 space-y-2">
