@@ -71,10 +71,14 @@ export default function AuthPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('Login button clicked')
+    console.log('Username:', formData.username)
+    console.log('Password length:', formData.password?.length)
     setError('')
     setLoading(true)
 
     try {
+      console.log('Sending login request...')
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -85,24 +89,30 @@ export default function AuthPage() {
         })
       })
 
+      console.log('Response received:', res.status)
       const data = await res.json()
+      console.log('Response data:', data)
 
       if (data.success) {
         try {
           localStorage.setItem('token', data.token)
           localStorage.setItem('user', JSON.stringify(data.user))
+          console.log('Redirecting to home...')
           router.push('/')
         } catch (storageError) {
+          console.error('Storage error:', storageError)
           setError('浏览器不支持本地存储，请更换浏览器')
         }
       } else {
+        console.error('Login failed:', data.error)
         setError(data.error || '登录失败')
       }
     } catch (err) {
-      console.error('Login error:', err)
+      console.error('Login request error:', err)
       setError('登录失败，请稍后重试')
     } finally {
       setLoading(false)
+      console.log('Login handler finished')
     }
   }
 
